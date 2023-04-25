@@ -56,15 +56,41 @@ Employee.find({name:'Ryan Murphy'}).then((result)=>{   //find() always returns a
 });
 */
 
-// Find Ryan's accounts
-Employee.find({name:'Ryan Murphy'}).then((res)=>{
-    Account.find({empID:res[0].empID}).then((result)=>{
-        console.log(result);
-    })
-})
 
-// Setter used on virtual property
+
+// Find Ryan's accounts
+async function main(){
+    let temp=[];
+    let acctable=[];
+    let emptable = await Employee.find({name:'Ryan Murphy'});
+    for(let i=0;i<emptable.length;i++){
+        acctable = await Account.find({empID:emptable[i].empID});
+        acctable.forEach(acc=>{
+            temp.push(acc);
+        })
+    }
+    console.log(temp);
+}
+
+main();
+
+/*
+Employee.find({name:'Ryan Murphy'}).then((res)=>{
+    let temp = [];
+    res.forEach(emp => {
+        Account.find({empID:emp.empID}).then((result)=>{
+            console.log(result);
+            temp.push(result);
+        });
+    });
+    console.log('results >',temp);
+});
+*/
+
+/*
+// Setter used on virtual property; can take in a full property at once and let the Schema remember the function
 Employee.find({name:'Ryan Murphy'}).then((res)=>{
     res[0].fullName = 'Ryan Murphy';
     console.log(res[0].lName);
 })
+*/
