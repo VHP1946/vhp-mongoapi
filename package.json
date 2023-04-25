@@ -4,16 +4,17 @@
   "description": "Will be the interface to mongoDB through our server",
   "main": "server.js",
   "scripts": {
-    "dev":"nodemon server.js",
-    "server":"node server.js",
+    "dev": "nodemon server.js",
+    "server": "node server.js",
     "store": "node server.js",
-    "mongotest":"node testmongo.js",
-    "mongoosetest":"node testmongo.js"
+    "mongotest": "node testmongo.js",
+    "mongoosetest": "node testmongoose.js"
   },
   "author": "cmv",
   "license": "ISC",
   "dependencies": {
-    "nodemon": "^2.0.19",
-    "mongodb": "^5.2.0"
+    "mongodb": "^5.2.0",
+    "mongoose": "^7.0.5",
+    "nodemon": "^2.0.19"
   }
 }
