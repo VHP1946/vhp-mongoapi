@@ -64,10 +64,8 @@ var accSchema = new Schema({
 	resetPswrd: Date
 });
 
-
-
 module.exports={
-    empSchema,
-    devSchema,
-    accSchema
-  }
+    Employee:empSchema,
+    Device:devSchema,
+    Account:accSchema
+}

@@ -8,9 +8,18 @@ devs = require('./data/devicelog.json');
 accs = require('./data/accountlog.json');
 
 connComp = mongoose.createConnection('mongodb+srv://christianv:AMracing5511@cluster0.0awfqdk.mongodb.net/Company');
+
 const Employee = connComp.model('Employee', compschemes.empSchema);  // One model per collection
 const Device = connComp.model('Device', compschemes.devSchema);
 const Account = connComp.model('Account', compschemes.accSchema);
+
+/**
+ * @todo undestanding schema default and virtuals (how and when to use)
+ * @todo can we use ...Many() in all case or does it require an array argument
+ */
+
+
+
 
 /*
 Account.insertMany(accs).then(res=>{
@@ -19,6 +28,7 @@ Account.insertMany(accs).then(res=>{
 */
 
 /*
+
 Employee.deleteMany().then(()=>{
     Employee.find().then((res)=>{
         console.log(res);
@@ -27,6 +37,8 @@ Employee.deleteMany().then(()=>{
 */
 
 /*
+
+//do we need to send docs through an array OR can we just send one off objects
 Employee.insertMany(emps,{ordered:false})   // ordered:false allows for existing documents without erroring whole function
     .then((res)=>{
         console.log(res);
@@ -92,5 +104,6 @@ Employee.find({name:'Ryan Murphy'}).then((res)=>{
 Employee.find({name:'Ryan Murphy'}).then((res)=>{
     res[0].fullName = 'Ryan Murphy';
     console.log(res[0].lName);
+    res[0].save()
 })
 */

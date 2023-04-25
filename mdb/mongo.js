@@ -3,20 +3,21 @@ const mongoose = require('mongoose'),
         fs = require('fs');
 
 
-const compschemes = require('../models/CompanySchemes.js');
+const schemas = require('../models/vhp-schemas');
 
 class VHPMongoClient{
     constructor(uri,afterConnect=()=>{}){
         let startup = mongoose.createConnection(uri).asPromise();
         this.connection = null; //hold original conneciton
         this.admin = null; //hold admin access
-        this.dbCursor = null; //holds the current dbCursor, may not need and can hold in function
 
         startup.then(conn=>{
             this.connection = conn;
             this.admin = this.connection.db.admin();
-            this.admin.listDatabases().then(res=>{console.log('Clusters Databases >',res)});
 
+            this.ROUTErequest({db:'Company',collect:'Employee'}).then(
+                answr=>{console.log(answr)}
+            )
             /*
             this.dbCursor=this.connection.useDb('Companyss').model('Employee', compschemes.empSchema);
             this.dbCursor.find({empID:'58'}).then(res=>{console.log('Results >',res)})
@@ -33,10 +34,20 @@ class VHPMongoClient{
      */
     ROUTErequest(pack){
         return new Promise((resolve,reject)=>{
+            var dbcursor = null;
             this.CHECKforDB(pack.db).then(dbexists=>{
                 if(dbexists){
                     //check for pack.collect
-
+                    if(schemas[pack.collect]){
+                        dbcursor = this.connection.useDb(pack.db).model(pack.collect,schemas[pack.collect]);
+                        switch(pack.method){
+                            case 'QUERY':{return resolve(dbcursor.find({empID:'58'}))}
+                            case 'REMOVE':{return resolve('not started')}
+                            case 'UPDATE':{return resolve('not started')}
+                            case 'INSERT':{return resolve('not started')}
+                        }
+                        return resolve('could not resolve method');
+                    }else{console.log('NO SCHEMA')}
                 }
             })
         });
@@ -55,9 +66,5 @@ class VHPMongoClient{
         })
     }
 }
-
-
-let n = new VHPMongoClient();
-n.ROUTErequest()
 module.exports=VHPMongoClient;
 
