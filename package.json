@@ -6,7 +6,9 @@
   "scripts": {
     "dev":"nodemon server.js",
     "server":"node server.js",
-    "store": "node server.js"
+    "store": "node server.js",
+    "mongotest":"node testmongo.js",
+    "mongoosetest":"node testmongo.js"
   },
   "author": "cmv",
   "license": "ISC",
