@@ -59,6 +59,12 @@ Employee.find({name:'Ryan Murphy'}).then((result)=>{   //find() always returns a
 // Find Ryan's accounts
 Employee.find({name:'Ryan Murphy'}).then((res)=>{
     Account.find({empID:res[0].empID}).then((result)=>{
-        console.log(result[0]);
+        console.log(result);
     })
+})
+
+// Setter used on virtual property
+Employee.find({name:'Ryan Murphy'}).then((res)=>{
+    res[0].fullName = 'Ryan Murphy';
+    console.log(res[0].lName);
 })

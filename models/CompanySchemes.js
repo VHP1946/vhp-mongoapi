@@ -28,6 +28,10 @@ var empSchema = new Schema({
         fullName: {
             get(){
                 return this.fName + ' ' + this.lName;
+            },
+            set(v){
+                this.fName = v.substr(0, v.indexOf(' '));
+                this.lName = v.substr(v.indexOf(' ')+1);
             }
         }
     }

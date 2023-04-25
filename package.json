@@ -8,7 +8,7 @@
     "server": "node server.js",
     "store": "node server.js",
     "mongotest": "node testmongo.js",
-    "mongoosetest": "node testmongo.js"
+    "mongoosetest": "node testmongoose.js"
   },
   "author": "cmv",
   "license": "ISC",
