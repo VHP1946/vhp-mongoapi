@@ -4,41 +4,19 @@ const path = require('path'),
       http = require('http');
 var {exec} = require('child_process');
 
-var {ROUTEdatamart,ROUTEadmindatamart,INITcollections} = require('./bin/mart/vapi-datamart.js');
+const VHPMongoClient=require('./mdb/mongo');
 
-var japi = require('./bin/jmart/japimart.js');
-
-INITcollections(path.join(__dirname,process.env.DATAPATH?process.env.DATAPATH:'../data/'));
-
-var ROUTEstore=(req,res,pak)=>{
-  return new Promise((resolve,reject)=>{
-    //console.log('PACK ',pak.data);
-    let storereq = pak.data.access.request.toUpperCase() || '';
-    switch(storereq){
-      case 'MART':{
-        console.log('run mart')
-        return resolve(ROUTEdatamart(pak));
-        break;
-      }
-      case 'JMART':{
-        return resolve(japi.ROUTEjmart(pak));
-        break;
-      }
-      case 'ADMIN':{
-        return resolve(ROUTEadmindatamart(pak));
-        break;
-      }
-      default:{
-        pak.success=false;
-        pak.msg="Bad Request";
-        res.write(JSON.stringify(pak))
-        res.end();
-        return resolve(pak);
-      }
-    }
-  });
+let connectInfo ={
+  user: 'christianv',
+  pswrd: 'AMracing5511',
+  db:'',
+  cluster:'cluster0'
 }
+let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.cluster}.0awfqdk.mongodb.net/${connectInfo.db}?retryWrites=true&w=majority`
+let vmclient = new VHPMongoClient(uri,()=>{console.log('running after connected')});
 
+
+/*
 var PORT = process.env.PORT || 8080//4050; //port for local host
 
 var server = http.createServer();
@@ -62,23 +40,8 @@ server.on('request',(req,res)=>{
       }
     }
     console.log(log);
-    ROUTEstore(req,res,vpak).then(
-      answr=>{
-        console.log('DONE',answr);
-        res.write(JSON.stringify(vpak));
-        res.end();
-      }
-    ).catch(
-      err=>{
-        res.write(JSON.stringify({
-          success:false,
-          msg:err,
-          body:{result:null}
-        }));
-        res.end();
-      }
-    )
   });
 });
 
 server.listen(PORT,()=>{console.log('VAPI Core Listening: ',PORT)});
+*/
