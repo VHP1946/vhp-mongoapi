@@ -13,7 +13,21 @@ let connectInfo ={
   cluster:'cluster0'
 }
 let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.cluster}.0awfqdk.mongodb.net/${connectInfo.db}?retryWrites=true&w=majority`
-let vmclient = new VHPMongoClient(uri,()=>{console.log('running after connected')});
+let vmclient = new VHPMongoClient(uri,()=>{
+  vmclient.ROUTErequest({
+    db:'Company',
+    collect:'Employee',
+    method:'INSERT',
+    options:{
+      docs:{
+        empID:'05',
+        fName:'test',
+        lName:'Run',
+        testprop:'test'
+      }
+    }
+  }).then(res=>{console.log('RESULT >',res)});
+});
 
 
 /*

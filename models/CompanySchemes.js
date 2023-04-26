@@ -24,6 +24,7 @@ var empSchema = new Schema({
 	picture: String
 },
 {
+	strict:false,
     virtuals: {
         fullName: {
             get(){

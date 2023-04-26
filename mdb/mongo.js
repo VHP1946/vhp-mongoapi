@@ -6,45 +6,46 @@ const mongoose = require('mongoose'),
 const schemas = require('../models/vhp-schemas');
 
 class VHPMongoClient{
+    /**
+     * Will attempt to connect to a mongodb server based on the
+     * uri passed. You can pass function to afterConnect to run
+     * after a connection has been successful.
+     * 
+     * @param {String} uri 
+     * @param {Function} afterConnect 
+     */
     constructor(uri,afterConnect=()=>{}){
         let startup = mongoose.createConnection(uri).asPromise();
         this.connection = null; //hold original conneciton
         this.admin = null; //hold admin access
 
         startup.then(conn=>{
+            console.log('Connected');
             this.connection = conn;
             this.admin = this.connection.db.admin();
-
-            this.ROUTErequest({db:'Company',collect:'Employee'}).then(
-                answr=>{console.log(answr)}
-            )
-            /*
-            this.dbCursor=this.connection.useDb('Companyss').model('Employee', compschemes.empSchema);
-            this.dbCursor.find({empID:'58'}).then(res=>{console.log('Results >',res)})
-            afterConnect();
-            */
+            afterConnect()
         }).catch(err=>{console.log(err)})
     }
 
     /**
      * Here are some notes on this
      * 
-     * @param {{db:String,collect,method}} pack
+     * @param {{db:String,collect:String,method:String}} pack
      * @returns 
      */
     ROUTErequest(pack){
         return new Promise((resolve,reject)=>{
-            var dbcursor = null;
+            var dbcursor = null; //holds the database to be request from
             this.CHECKforDB(pack.db).then(dbexists=>{
                 if(dbexists){
-                    //check for pack.collect
-                    if(schemas[pack.collect]){
+                    if(schemas[pack.collect]){//check that pack.collect has a schema
                         dbcursor = this.connection.useDb(pack.db).model(pack.collect,schemas[pack.collect]);
+                        console.log('Schema >',JSON.stringify(dbcursor.schema.obj.empID));
                         switch(pack.method){
-                            case 'QUERY':{return resolve(dbcursor.find({empID:'58'}))}
-                            case 'REMOVE':{return resolve('not started')}
-                            case 'UPDATE':{return resolve('not started')}
-                            case 'INSERT':{return resolve('not started')}
+                            case 'QUERY':{return resolve(dbcursor.find(pack.options.query))}
+                            case 'REMOVE':{return resolve(dbcursor.deleteMany(pack.options.query))}
+                            case 'UPDATE':{return resolve(dbcursor.updateMany(pack.options.query,pack.options.update))}
+                            case 'INSERT':{return resolve(dbcursor.insertMany(pack.options.docs))}
                         }
                         return resolve('could not resolve method');
                     }else{console.log('NO SCHEMA')}
