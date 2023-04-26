@@ -8,13 +8,13 @@ var empSchema = new Schema({
 	fName: String,
 	lName: String,
 	
-	coid: String,
+	coid: {type:String, uppercase:true},
 	title: String,
 	type: String,
 	repTo: String, //empID
 	
 	jobDesc: String,
-	joined: String,
+	joined: Date,
 	bday: Date,
 	skills: String,
 	interest: String,
@@ -23,8 +23,10 @@ var empSchema = new Schema({
 	goals: Array,
 	picture: String
 },
-{
-	strict:false,
+{	
+	strict: false,
+	autoCreate: false,
+	autoIndex: false,
     virtuals: {
         fullName: {
             get(){
