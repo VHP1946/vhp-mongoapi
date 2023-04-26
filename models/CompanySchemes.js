@@ -25,8 +25,6 @@ var empSchema = new Schema({
 },
 {	
 	strict: false,
-	autoCreate: false,
-	autoIndex: false,
     virtuals: {
         fullName: {
             get(){
@@ -39,7 +37,16 @@ var empSchema = new Schema({
         }
     }
 });
+var blueSchema = new Schema({
+	empID: String,
 
+	name: String,
+	fName: String,
+	lName: String
+},{
+	autoCreate: false,
+	autoIndex: false,
+});
 var devSchema = new Schema({
 	empID: String,
 	name: String,
@@ -70,5 +77,6 @@ var accSchema = new Schema({
 module.exports={
     Employee:empSchema,
     Device:devSchema,
-    Account:accSchema
+    Account:accSchema,
+	BlueUser:blueSchema
 }

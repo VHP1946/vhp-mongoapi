@@ -50,7 +50,7 @@ Employee.insertMany(emps,{ordered:false})   // ordered:false allows for existing
 */
 
 async function Views(){  // Have to manually create collection
-    const blueUser = await connComp.model('BlueUser',compschemes.Employee);
+    const blueUser = await connComp.model('GreenUser',compschemes.BlueUser);
 
     await blueUser.createCollection({
         viewOn: 'employees',
@@ -68,15 +68,18 @@ async function Views(){  // Have to manually create collection
     })
 
     blueUser.find({empID:'301'}).then((result)=>{   //find() always returns an array, findOne() will return single object
-        console.log('Redacted >',result);
+        console.log('Green >',result[0]);
     });
 }
 async function ViewTest(){  // Once created collections are permantly linked
-    const blueUser = await connComp.model('BlueUser',compschemes.Employee);
-    await Employee.updateOne({empID:'301'},{bday:'11-29-1984'});
+    const blueUser = await connComp.model('BlueUser',compschemes.BlueUser);
+    //await Employee.updateOne({empID:'301'},{bday:'11-29-1984'});
 
     blueUser.find({empID:'301'}).then((res)=>{
-        console.log(res[0]);
+        console.log('blue >', res[0]);
+    })
+    Employee.find({empID:'301'}).then((res)=>{
+        console.log('emp >', res[0]);
     })
 }
 
@@ -90,7 +93,7 @@ async function Versioning(){
         
     })
 }
-Versioning();
+Views();
 
 // Find Ryan's accounts
 async function main(){
