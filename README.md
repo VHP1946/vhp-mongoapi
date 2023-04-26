@@ -4,9 +4,7 @@ This project will end up replacing our current datamart as the primary data mart
 
 
 - [Requests](#requests)
-
-
-
+- [Responses](#responses)
 
 
 # Requests
@@ -37,3 +35,16 @@ pack:{
     }
   }
 }
+
+## Responses
+
+Remove
+
+
+
+Update
+
+Find
+
+Insert
+
