@@ -76,6 +76,7 @@ var accSchema = new Schema({
 
 module.exports={
     Employee:empSchema,
+	BlueUser:empSchema,
     Device:devSchema,
     Account:accSchema,
 	BlueUser:blueSchema
