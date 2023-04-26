@@ -38,6 +38,7 @@ Employee.deleteMany().then(()=>{
 
 /*
 
+
 //do we need to send docs through an array OR can we just send one off objects
 Employee.insertMany(emps,{ordered:false})   // ordered:false allows for existing documents without erroring whole function
     .then((res)=>{
