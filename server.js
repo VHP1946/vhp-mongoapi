@@ -15,8 +15,8 @@ let connectInfo ={
 let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.cluster}.0awfqdk.mongodb.net/${connectInfo.db}?retryWrites=true&w=majority`
 
 let vpack = {
-  db:'',
-  collect:'',
+  db:'Company',
+  collect:'Employee',
   method:'',
   options:{}
 }
@@ -35,23 +35,52 @@ let vpack = {
     }
 */
 let fpack={
-  
+  db:'Company',
+  collect:'Employee',
+  method:'QUERY',
+  options:{
+    docs:{
+      empID:'07'
+    }
+  }
 }
 let rpack={
-
+  db:'Company',
+  collect:'Employee',
+  method:'REMOVE',
+  options:{
+    docs:{
+      empID:'07'
+    }
+  }
 }
-let upack={}
-let ipack={}
-
-
-vpack.options = fpack;
-vpack.options = upack;
-vpack.options = rpack;
-vpack.options = ipack;
-
+let upack={
+  db:'Company',
+  collect:'Employee',
+  method:'UPDATE',
+  options:{
+    docs:{
+      empID:'07',
+      fName: 'test',
+      lName: 'guy'
+    }
+  }
+}
+let ipack={
+  db:'Company',
+  collect:'Employee',
+  method:'INSERT',
+  options:{
+    docs:{
+      empID:'07',
+      fName: 'test',
+      lName: 'guy'
+    }
+  }
+}
 
 let vmclient = new VHPMongoClient(uri,()=>{
-  vmclient.ROUTErequest(vpack).then(res=>{console.log('RESULT >',res)}).catch(err=>{'ERROR Response >',err});
+  vmclient.ROUTErequest(fpack).then(res=>{console.log('RESULT >',res)}).catch(err=>{'ERROR Response >',err});
 });
 
 

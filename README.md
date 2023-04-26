@@ -38,13 +38,33 @@ pack:{
 
 ## Responses
 
-Remove
+Remove:{
+  good: RESULT > { acknowledged: true, deletedCount: 57 }  ::DELETED WHOLE DB::
+  bad (doc does not exist): RESULT > { acknowledged: true, deletedCount: 0 }
+}
 
 
 
 Update
 
-Find
+Find:{
+  good: ::FOUND ENTIRE DATABASE::
 
-Insert
+}
+
+Insert:{
+  good: RESULT > [
+        {
+          empID: '07',
+          fName: 'test',
+          lName: 'guy',
+          tasks: [],
+          goals: [],
+          _id: new ObjectId("64498dd492bbc6fc70b8cec2"),
+          __v: 0
+        }
+      ]
+
+  bad (doc already exists): ::NO RESPONSE::
+}
 

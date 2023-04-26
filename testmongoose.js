@@ -36,8 +36,6 @@ Employee.deleteMany().then(()=>{
 });
 */
 
-/*
-
 
 //do we need to send docs through an array OR can we just send one off objects
 Employee.insertMany(emps,{ordered:false})   // ordered:false allows for existing documents without erroring whole function
@@ -48,7 +46,6 @@ Employee.insertMany(emps,{ordered:false})   // ordered:false allows for existing
         });
     })
     .catch((err)=>{console.log('error >',err)});
-*/
 
 async function Views(){  // Have to manually create collection
     const blueUser = await connComp.model('GreenUser',compschemes.BlueUser);
@@ -94,7 +91,7 @@ async function Versioning(){
         
     })
 }
-Views();
+
 
 // Find Ryan's accounts
 async function main(){
