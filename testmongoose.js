@@ -9,9 +9,9 @@ accs = require('./data/accountlog.json');
 
 connComp = mongoose.createConnection('mongodb+srv://christianv:AMracing5511@cluster0.0awfqdk.mongodb.net/Company');
 
-const Employee = connComp.model('Employee', compschemes.empSchema);  // One model per collection
-const Device = connComp.model('Device', compschemes.devSchema);
-const Account = connComp.model('Account', compschemes.accSchema);
+const Employee = connComp.model('Employee', compschemes.Employee);  // One model per collection
+const Device = connComp.model('Device', compschemes.Device);
+const Account = connComp.model('Account', compschemes.Account);
 
 /**
  * @todo undestanding schema default and virtuals (how and when to use)
@@ -49,26 +49,48 @@ Employee.insertMany(emps,{ordered:false})   // ordered:false allows for existing
     .catch((err)=>{console.log('error >',err)});
 */
 
-/*
-Employee.find({empID:null}).then((result)=>{
-    console.log('Results >', result);
-});
-*/
+async function Views(){  // Have to manually create collection
+    const blueUser = await connComp.model('BlueUser',compschemes.Employee);
 
-/*
-Employee.deleteMany({empID:null}).then((result)=>{ 
-    console.log(result);
-});
-*/
+    await blueUser.createCollection({
+        viewOn: 'employees',
+        pipeline: [
+            {
+                $set:{ 
+                    name: {$concat:[{$substr:['$name', 0, 3]}, '...']}
+                }
+            }
+        ]
+    });
 
-/*
-Employee.find({name:'Ryan Murphy'}).then((result)=>{   //find() always returns an array, findOne() will return single object
-    console.log(result);
-    console.log(result[0].fullName); 
-});
-*/
+    Employee.find({empID:'301'}).then((res)=>{
+        console.log('Employee >',res[0]);
+    })
 
+    blueUser.find({empID:'301'}).then((result)=>{   //find() always returns an array, findOne() will return single object
+        console.log('Redacted >',result);
+    });
+}
+async function ViewTest(){  // Once created collections are permantly linked
+    const blueUser = await connComp.model('BlueUser',compschemes.Employee);
+    await Employee.updateOne({empID:'301'},{bday:'11-29-1984'});
 
+    blueUser.find({empID:'301'}).then((res)=>{
+        console.log(res[0]);
+    })
+}
+
+async function Versioning(){
+    await Employee.find({empID:'301'}).then((res)=>{
+        console.log(res[0]);
+        res[0].skills = "";
+        res[0].save().then(res=>{
+            console.log(res);
+        })
+        
+    })
+}
+Versioning();
 
 // Find Ryan's accounts
 async function main(){
@@ -84,20 +106,6 @@ async function main(){
     console.log(temp);
 }
 
-main();
-
-/*
-Employee.find({name:'Ryan Murphy'}).then((res)=>{
-    let temp = [];
-    res.forEach(emp => {
-        Account.find({empID:emp.empID}).then((result)=>{
-            console.log(result);
-            temp.push(result);
-        });
-    });
-    console.log('results >',temp);
-});
-*/
 
 /*
 // Setter used on virtual property; can take in a full property at once and let the Schema remember the function
