@@ -74,10 +74,32 @@ var accSchema = new Schema({
 	resetPswrd: Date
 });
 
+var cBidSchema = new Schema({
+	date: Date,
+	jobname: String,
+	primary: String,
+	profit: Number,
+	amount: String,
+	bid: String,
+	estimator: String,
+	location: String,
+	sqft: Number,
+	tonnage: Number,
+	type: String,
+	bldtype: String,
+	margin: String,
+	notes: String
+});
+
 module.exports={
     Employee:empSchema,
 	BlueUser:empSchema,
     Device:devSchema,
     Account:accSchema,
-	BlueUser:blueSchema
+	
+	BlueUser:blueSchema,
+	
+	lrgTest:cBidSchema,
+	xlTest:cBidSchema,
+	xxlTest:cBidSchema
 }

@@ -16,11 +16,12 @@ let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.
 
 let fpack={
   db:'Company',
-  collect:'Employee',
+  collect:'xlTest',
   method:'QUERY',
   options:{
     query:{
-      empID:{$gt:'01', $lt:'20'} 
+      //empID:{$gt:'01', $lt:'20'} 
+      jobname: 'Test-2644'
     }
   }
 }
@@ -50,22 +51,10 @@ let upack={
 }
 let ipack={
   db:'Company',
-  collect:'Employee',
+  collect:'lrgTest',
   method:'INSERT',
   options:{
-    docs:[{
-      empID:'08',
-      fName: 'test',
-      lName: 'guy'
-    },{
-      empID:'09',
-      fName: 'test',
-      lName: 'guy'
-    },{
-      empID:'11',
-      fName: 'test',
-      lName: 'guy'
-    }]
+    docs: {}
   }
 }
 

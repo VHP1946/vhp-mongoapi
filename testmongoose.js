@@ -3,49 +3,45 @@ const mongoose = require('mongoose'),
         fs = require('fs');
 const compschemes = require('./models/CompanySchemes.js');
 
-emps = require('./data/emplog.json');
-devs = require('./data/devicelog.json');
-accs = require('./data/accountlog.json');
+var emps = require('./data/emplog.json');
+var devs = require('./data/devicelog.json');
+var accs = require('./data/accountlog.json');
+var bids = require('./data/COMMbidlog.json');
 
 connComp = mongoose.createConnection('mongodb+srv://christianv:AMracing5511@cluster0.0awfqdk.mongodb.net/Company');
 
 const Employee = connComp.model('Employee', compschemes.Employee);  // One model per collection
 const Device = connComp.model('Device', compschemes.Device);
 const Account = connComp.model('Account', compschemes.Account);
+const Test = connComp.model('xxlTest',compschemes.lrgTest);
 
 /**
  * @todo undestanding schema default and virtuals (how and when to use)
  * @todo can we use ...Many() in all case or does it require an array argument
  */
-
-
-
+//console.log(Employee.db.collections);
 
 /*
-Account.insertMany(accs).then(res=>{
+var tempdata=[];
+for(let i=0;i<100000;i++){
+  tempdata.push({
+    date: new Date(),
+    jobname: 'Test-' + i,
+    profit: i*100,
+    sqft:1,
+    tonnage:1
+  });
+}
+
+Test.insertMany(tempdata).then(res=>{
     console.log(res);
 })
 */
 
-/*
+Test.find({jobname:'Test-2644'}).then(res=>{
+    console.log(res);
+})
 
-Employee.deleteMany().then(()=>{
-    Employee.find().then((res)=>{
-        console.log(res);
-    });
-});
-*/
-
-
-//do we need to send docs through an array OR can we just send one off objects
-Employee.insertMany(emps,{ordered:false})   // ordered:false allows for existing documents without erroring whole function
-    .then((res)=>{
-        console.log(res);
-        Employee.find().then((result)=>{
-            console.log('Results >', result);
-        });
-    })
-    .catch((err)=>{console.log('error >',err)});
 
 async function Views(){  // Have to manually create collection
     const blueUser = await connComp.model('GreenUser',compschemes.BlueUser);
