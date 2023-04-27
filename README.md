@@ -38,33 +38,99 @@ pack:{
 
 ## Responses
 
+options.query must be a single object; will not accept an array
+options.doc may be either a single object or an array
+
+
 Remove:{
-  good: RESULT > { acknowledged: true, deletedCount: 57 }  ::DELETED WHOLE DB::
+  good: RESULT > { acknowledged: true, deletedCount: 1 } 
   bad (doc does not exist): RESULT > { acknowledged: true, deletedCount: 0 }
+
+  (array): ::NO RESPONSE::
 }
 
 
+Update:{
+  good: RESULT > {
+          acknowledged: true,
+          modifiedCount: 1,
+          upsertedId: null,
+          upsertedCount: 0,
+          matchedCount: 1
+        }
+  "failed" (doc already updated): RESULT > {
+                                    acknowledged: true,
+                                    modifiedCount: 0,
+                                    upsertedId: null,
+                                    upsertedCount: 0,
+                                    matchedCount: 1
+                                  }
+}
 
-Update
 
 Find:{
-  good: ::FOUND ENTIRE DATABASE::
+  good: RESULT > [
+              {
+                _id: new ObjectId("64498ece88c3044762686fd0"),
+                empID: '07',
+                fName: 'First',
+                lName: 'Last',
+                tasks: [],
+                goals: [],
+                __v: 0
+              }
+            ]
+  bad (doc does not exist): RESULT > []
 
 }
 
+
 Insert:{
-  good: RESULT > [
-        {
-          empID: '07',
-          fName: 'test',
-          lName: 'guy',
-          tasks: [],
-          goals: [],
-          _id: new ObjectId("64498dd492bbc6fc70b8cec2"),
-          __v: 0
-        }
-      ]
+  good (single doc): RESULT > [
+                        {
+                          empID: '07',
+                          fName: 'test',
+                          lName: 'guy',
+                          tasks: [],
+                          goals: [],
+                          _id: new ObjectId("64498dd492bbc6fc70b8cec2"),
+                          __v: 0
+                        }
+                      ]
+
+  good (array of docs): RESULT > [
+                              {
+                                empID: '08',
+                                fName: 'test',
+                                lName: 'guy',
+                                tasks: [],
+                                goals: [],
+                                _id: new ObjectId("644a759d6d689ac841293942"),
+                                __v: 0
+                              },
+                              {
+                                empID: '09',
+                                fName: 'test',
+                                lName: 'guy',
+                                tasks: [],
+                                goals: [],
+                                _id: new ObjectId("644a759d6d689ac841293943"),
+                                __v: 0
+                              },
+                              {
+                                empID: '10',
+                                fName: 'test',
+                                lName: 'guy',
+                                tasks: [],
+                                goals: [],
+                                _id: new ObjectId("644a759d6d689ac841293944"),
+                                __v: 0
+                              }
+                            ]
 
   bad (doc already exists): ::NO RESPONSE::
+
+
+  bad (one doc exists in array): ::NO RESPONSE::
 }
 

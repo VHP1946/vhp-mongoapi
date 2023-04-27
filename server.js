@@ -14,33 +14,13 @@ let connectInfo ={
 }
 let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.cluster}.0awfqdk.mongodb.net/${connectInfo.db}?retryWrites=true&w=majority`
 
-let vpack = {
-  db:'Company',
-  collect:'Employee',
-  method:'',
-  options:{}
-}
-/*
-
-    db:'Company',
-    collect:'BlueUser',
-    method:'INSERT',
-    options:{
-      docs:{
-        empID:'06',
-        fName:'test',
-        lName:'Run',
-        testprop:'test'
-      }
-    }
-*/
 let fpack={
   db:'Company',
   collect:'Employee',
   method:'QUERY',
   options:{
-    docs:{
-      empID:'07'
+    query:{
+      empID:{$gt:'01', $lt:'20'} 
     }
   }
 }
@@ -49,7 +29,7 @@ let rpack={
   collect:'Employee',
   method:'REMOVE',
   options:{
-    docs:{
+    query:{
       empID:'07'
     }
   }
@@ -59,10 +39,12 @@ let upack={
   collect:'Employee',
   method:'UPDATE',
   options:{
-    docs:{
-      empID:'07',
-      fName: 'test',
-      lName: 'guy'
+    query:{
+      empID:'07'
+    },
+    update:{
+      fName:'First',
+      lName:'Last'
     }
   }
 }
@@ -71,11 +53,19 @@ let ipack={
   collect:'Employee',
   method:'INSERT',
   options:{
-    docs:{
-      empID:'07',
+    docs:[{
+      empID:'08',
       fName: 'test',
       lName: 'guy'
-    }
+    },{
+      empID:'09',
+      fName: 'test',
+      lName: 'guy'
+    },{
+      empID:'11',
+      fName: 'test',
+      lName: 'guy'
+    }]
   }
 }
 

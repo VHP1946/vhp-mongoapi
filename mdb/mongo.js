@@ -40,9 +40,15 @@ class VHPMongoClient{
                 if(dbexists){
                     if(schemas[pack.collect]){//check that pack.collect has a schema
                         dbcursor = this.connection.useDb(pack.db).model(pack.collect,schemas[pack.collect]);
-                        console.log('Schema >',JSON.stringify(dbcursor.schema.obj.empID));
+                        //console.log('Schema >',JSON.stringify(dbcursor.schema.obj.empID));
                         switch(pack.method){
-                            case 'QUERY':{return resolve(dbcursor.find(pack.options.query))}
+                            case 'QUERY':{
+                                if(pack.options.query){
+                                    return resolve(dbcursor.find(pack.options.query));
+                                }else{
+                                    return resolve('No QUERY option provided');
+                                }
+                            }
                             case 'REMOVE':{return resolve(dbcursor.deleteMany(pack.options.query))}
                             case 'UPDATE':{return resolve(dbcursor.updateMany(pack.options.query,pack.options.update))}
                             case 'INSERT':{return resolve(dbcursor.insertMany(pack.options.docs))}
