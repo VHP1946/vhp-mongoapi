@@ -134,3 +134,5 @@ Insert:{
   bad (one doc exists in array): ::NO RESPONSE::
 }
 
+# Virtuals
+Virtuals only show when explictly called. They will not show when calling the doc as a whole.

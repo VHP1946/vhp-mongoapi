@@ -21,28 +21,6 @@ const Test = connComp.model('xxlTest',compschemes.lrgTest);
  */
 //console.log(Employee.db.collections);
 
-/*
-var tempdata=[];
-for(let i=0;i<100000;i++){
-  tempdata.push({
-    date: new Date(),
-    jobname: 'Test-' + i,
-    profit: i*100,
-    sqft:1,
-    tonnage:1
-  });
-}
-
-Test.insertMany(tempdata).then(res=>{
-    console.log(res);
-})
-*/
-
-Test.find({jobname:'Test-2644'}).then(res=>{
-    console.log(res);
-})
-
-
 async function Views(){  // Have to manually create collection
     const blueUser = await connComp.model('GreenUser',compschemes.BlueUser);
 
@@ -78,9 +56,9 @@ async function ViewTest(){  // Once created collections are permantly linked
 }
 
 async function Versioning(){
-    await Employee.find({empID:'301'}).then((res)=>{
+    Employee.find({empID:'301'}).then((res)=>{
         console.log(res[0]);
-        res[0].skills = "";
+        res[0].lName = 'Murphy';
         res[0].save().then(res=>{
             console.log(res);
         })
@@ -88,27 +66,35 @@ async function Versioning(){
     })
 }
 
-
 // Find Ryan's accounts
 async function main(){
     let temp=[];
     let acctable=[];
-    let emptable = await Employee.find({name:'Ryan Murphy'});
+    let emptable = await Employee.find();
     for(let i=0;i<emptable.length;i++){
         acctable = await Account.find({empID:emptable[i].empID});
-        acctable.forEach(acc=>{
-            temp.push(acc);
-        })
+        for(let x=0;x<acctable.length;x++){
+            emptable[i].accounts.push(acctable[x]._id);
+            await emptable[i].save();
+        }
     }
-    console.log(temp);
+    emptable = await Employee.find();
+    console.log(emptable);
 }
 
+async function second(){
+    for(let i=0;i<emps.length;i++){
+        if(emps[i].empID == '301'){
+            Employee.insertMany(emps[i]).then(res=>{
+                console.log(res);
+            })
+        }
+    }
+    /*
+    Employee.find({empID:'301'}).then(function(emp){
+        console.log(emp);
+    });
+    */
+}
 
-/*
-// Setter used on virtual property; can take in a full property at once and let the Schema remember the function
-Employee.find({name:'Ryan Murphy'}).then((res)=>{
-    res[0].fullName = 'Ryan Murphy';
-    console.log(res[0].lName);
-    res[0].save()
-})
-*/
+second();

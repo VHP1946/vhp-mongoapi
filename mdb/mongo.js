@@ -42,16 +42,17 @@ class VHPMongoClient{
                     console.log(pack.collect);
                     if(schemas[pack.collect]){//check that pack.collect has a schema
                         dbcursor = this.connection.useDb(pack.db).model(pack.collect,schemas[pack.collect]);
+                        if(pack.options.pop){
+                            let ref = schemas[pack.collect].virtuals[pack.options.pop].options.ref;
+                            this.connection.useDb(pack.db).model(ref,schemas[ref]);
+                        }
                         //console.log('Schema >',JSON.stringify(dbcursor.schema.obj.empID));
                         switch(pack.method){
-                            case 'QUERY':{
-                                if(pack.options.query){
-                                    return resolve(dbcursor.find(pack.options.query));
-                                }else{
-                                    return resolve('No QUERY option provided');
-                                }
+                            case 'QUERY':{return resolve(this.QUERYdb(dbcursor,pack));}
+                            case 'REMOVE':{
+                                console.log('remove');
+                                return resolve(dbcursor.deleteMany(pack.options.query))
                             }
-                            case 'REMOVE':{return resolve(dbcursor.deleteMany(pack.options.query))}
                             case 'UPDATE':{return resolve(dbcursor.updateMany(pack.options.query,pack.options.update))}
                             case 'INSERT':{return resolve(dbcursor.insertMany(pack.options.docs))}
                         }
@@ -61,6 +62,25 @@ class VHPMongoClient{
             })
         });
     }
+
+    QUERYdb(dbcursor, pack){
+        console.log('Query');
+        if(pack.options.query){
+            if(pack.options.pop){
+                console.log('pop');
+                dbcursor.find(pack.options.query).populate(pack.options.pop).then((res)=>{
+                    return res;
+                });
+            }else{
+                dbcursor.find(pack.options.query).then((res)=>{
+                    return res;
+                });
+            }
+        }else{
+            return ('No QUERY option provided');
+        }
+    }
+
 
     CHECKforDB(db){
         return new Promise((resolve,reject)=>{
