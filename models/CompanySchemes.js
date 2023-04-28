@@ -19,12 +19,14 @@ var empSchema = new Schema({
 	skills: String,
 	interest: String,
 	
+	devices: [{type: Schema.Types.ObjectId, ref: 'Device'}],
+	
 	tasks: Array,
 	goals: Array,
-	picture: String
+	picture: String,
 },
 {	
-	strict: false,
+	strictQuery: false,
     virtuals: {
         fullName: {
             get(){
@@ -34,19 +36,17 @@ var empSchema = new Schema({
                 this.fName = v.substr(0, v.indexOf(' '));
                 this.lName = v.substr(v.indexOf(' ')+1);
             }
-        }
+        },
+		accs: {
+			options:{
+				ref: 'Account',
+				localField: 'empID',
+				foreignField: 'empID'
+			}
+		}
     }
 });
-var blueSchema = new Schema({
-	empID: String,
 
-	name: String,
-	fName: String,
-	lName: String
-},{
-	autoCreate: false,
-	autoIndex: false,
-});
 var devSchema = new Schema({
 	empID: String,
 	name: String,
@@ -66,6 +66,7 @@ var devSchema = new Schema({
 
 var accSchema = new Schema({
 	empID: String,
+	emp: {type: mongoose.Schema.Types.ObjectId, ref: 'Employee'},
 	type: String,
 	user: String, // email OR username
 	pswrd: String,
@@ -96,8 +97,6 @@ module.exports={
 	BlueUser:empSchema,
     Device:devSchema,
     Account:accSchema,
-	
-	BlueUser:blueSchema,
 	
 	lrgTest:cBidSchema,
 	xlTest:cBidSchema,

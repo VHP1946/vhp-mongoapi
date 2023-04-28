@@ -16,12 +16,12 @@ let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.
 
 let fpack={
   db:'Company',
-  collect:'xlTest',
+  collect:'Employee',
   method:'QUERY',
   options:{
+    pop:'accs',
     query:{
-      //empID:{$gt:'01', $lt:'20'} 
-      jobname: 'Test-2644'
+      empID:'301'
     }
   }
 }
