@@ -5,6 +5,7 @@ const mongoose = require('mongoose'),
 
 const schemas = require('../models/vhp-schemas');
 
+console.log(schemas['Ticket']);
 class VHPMongoClient{
     /**
      * Will attempt to connect to a mongodb server based on the
@@ -38,6 +39,7 @@ class VHPMongoClient{
             var dbcursor = null; //holds the database to be request from
             this.CHECKforDB(pack.db).then(dbexists=>{
                 if(dbexists){
+                    console.log(pack.collect);
                     if(schemas[pack.collect]){//check that pack.collect has a schema
                         dbcursor = this.connection.useDb(pack.db).model(pack.collect,schemas[pack.collect]);
                         //console.log('Schema >',JSON.stringify(dbcursor.schema.obj.empID));
@@ -54,8 +56,8 @@ class VHPMongoClient{
                             case 'INSERT':{return resolve(dbcursor.insertMany(pack.options.docs))}
                         }
                         return resolve('could not resolve method');
-                    }else{console.log('NO SCHEMA')}
-                }
+                    }else{return resolve('No Collect');}
+                }else{return resolve('No DB');}
             })
         });
     }
@@ -63,6 +65,7 @@ class VHPMongoClient{
     CHECKforDB(db){
         return new Promise((resolve,reject)=>{
             this.admin.listDatabases().then(res=>{
+                console.log(res.databases)
                 if(res.databases){
                     for(let x=0,l=res.databases.length;x<l;x++){
                         if(db===res.databases[x].name){return resolve(true);}
@@ -71,6 +74,13 @@ class VHPMongoClient{
                 }else{return resolve(false);}
             }).catch(err=>{return resolve(false);})
         })
+    }
+    QUERYmongo(){
+        if(pack.options.query){
+            return resolve(dbcursor.find(pack.options.query));
+        }else{
+            return resolve('No QUERY option provided');
+        }
     }
 }
 module.exports=VHPMongoClient;

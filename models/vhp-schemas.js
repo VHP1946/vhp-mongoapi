@@ -1,6 +1,4 @@
-const compschemes = require('./CompanySchemes.js');
-
-
 module.exports={
-    ...compschemes
+    ...require('./CompanySchemes.js'),
+    ...require('./SupportSchemes.js')
 }
