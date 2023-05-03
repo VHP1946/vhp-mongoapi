@@ -92,7 +92,6 @@ server.on('request',(req,res)=>{
         cip:req.connection.remoteAddress,
       }
     }
-    console.log(log);
     vmclient.ROUTErequest(vpak.pack).then(result=>{
       console.log(result);
       res.write(JSON.stringify(result));

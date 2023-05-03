@@ -3,7 +3,6 @@ const {Schema} = mongoose;
 
 var empSchema = new Schema({
 	empID: String,
-
 	name: String,
 	fName: String,
 	lName: String,
@@ -18,9 +17,6 @@ var empSchema = new Schema({
 	bday: Date,
 	skills: String,
 	interest: String,
-	
-	devices: [{type: Schema.Types.ObjectId, ref: 'Device'}],
-	
 	tasks: Array,
 	goals: Array,
 	picture: String,
@@ -37,9 +33,16 @@ var empSchema = new Schema({
                 this.lName = v.substr(v.indexOf(' ')+1);
             }
         },
-		accs: {
+		Account: {
 			options:{
 				ref: 'Account',
+				localField: 'empID',
+				foreignField: 'empID'
+			}
+		},
+		Device: {
+			options:{
+				ref: 'Device',
 				localField: 'empID',
 				foreignField: 'empID'
 			}
@@ -48,6 +51,7 @@ var empSchema = new Schema({
 });
 
 var devSchema = new Schema({
+	devID: String,
 	empID: String,
 	name: String,
 	type: String,
@@ -66,11 +70,10 @@ var devSchema = new Schema({
 
 var accSchema = new Schema({
 	empID: String,
-	emp: {type: mongoose.Schema.Types.ObjectId, ref: 'Employee'},
 	type: String,
 	user: String, // email OR username
 	pswrd: String,
-	twoFactors: Array,
+	twoFactors: [{type:String,contact:String}],
 	active: Boolean,
 	resetPswrd: Date
 });
