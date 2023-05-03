@@ -23,6 +23,8 @@ var empSchema = new Schema({
 	picture: String,
 },
 {	
+	toJSON:{virtuals:true},
+	toObject:{virtuals:true},
 	strictQuery: false,
 	timestamps:true,
     virtuals: {

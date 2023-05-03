@@ -47,7 +47,7 @@ class VHPMongoClient{
                     if(schemas[pack.collect]){//check that pack.collect has a schema
                         dbcursor = this.connection.useDb(pack.db,{useCache:true}).model(pack.collect,schemas[pack.collect]);
                         switch(pack.method.toUpperCase()){
-                            case 'QUERY':{console.log('query');return resolve(this.QUERYdb(dbcursor,pack,populates));break;}
+                            case 'QUERY':{console.log('query');return resolve(this.QUERYdocs(dbcursor,pack,populates));break;}
                             case 'REMOVE':{console.log('remove');return resolve(this.REMOVEdocs(dbcursor,pack));break;}
                             case 'UPDATE':{console.log('update');return resolve(this.UPDATEdocs(dbcursor,pack));break;}
                             case 'INSERT':{console.log('insert');return resolve(this.INSERTdocs(dbcursor,pack));break;}
@@ -59,21 +59,20 @@ class VHPMongoClient{
         });
     }
 
-    QUERYdb(dbcursor, pack,poplist=[]){
+    QUERYdocs(dbcursor, pack,poplist=[]){
         return new Promise((resolve,reject)=>{
             let request = null;
             if(pack.options.query){
                 if(poplist.length>0){//if there are things to populate, loop through and establish the connection
                     for(let x=0,l=poplist.length;x<l;x++){
-                        console.log(poplist[x])
                         if(schemas[pack.collect].virtuals[poplist[x]]){
-                            console.log('population')
                             this.connection.useDb(pack.db,{useCache:true}).model(schemas[pack.collect].virtuals[poplist[x]].options.ref,schemas[schemas[pack.collect].virtuals[poplist[x]].options.ref]);
                         }
                     }
-                    request = dbcursor.find(pack.options.query).populate(poplist[0]);
-                }else{request = dbcursor.find(pack.options.query);}
+                    request = dbcursor.find(pack.options.query,pack.options.projection,pack.options.options).populate(poplist);
+                }else{request = dbcursor.find(pack.options.query,pack.options.projection,pack.options.options);}
                 request.then((res)=>{
+                    console.log(res);
                     return resolve(res);
                 });
             }else{return resolve('No QUERY option provided');}
@@ -92,7 +91,7 @@ class VHPMongoClient{
     }
     UPDATEdocs(dbcursor,pack){
         return new Promise((resolve,reject)=>{
-            return resolve(dbcursor.updateMany(pack.options));
+            return resolve(dbcursor.updateMany(pack.options.query,pack.options.update));
         });
     }
 
