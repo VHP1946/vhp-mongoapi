@@ -1,3 +1,34 @@
+const VHPMongoClient=require('./mdb/mongo');
+
+let connectInfo ={
+    user: 'christianv',
+    pswrd: 'AMracing5511',
+    db:'',
+    cluster:'cluster0'
+  };
+let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.cluster}.0awfqdk.mongodb.net/${connectInfo.db}?retryWrites=true&w=majority`;
+
+let fpack={
+    db:'Company',
+    collect:'Employee_Device',
+    method:'QUERY',
+    options:{
+      query:{
+        empID:'01-301'
+      }
+    }
+  }
+
+let vmclient = new VHPMongoClient(uri,()=>{
+    vmclient.ROUTErequest(fpack).then(answer=>{
+      console.log(answer[0].Device);
+    })
+});
+
+
+
+
+/*
 const mongoose = require('mongoose');
 
 const compschemes = require('./models/CompanySchemes.js');
@@ -81,5 +112,4 @@ async function second(){
     result = await Employee.find({empID:'01-301'}).populate('Device');
     console.log(result[0].Device);
 }
-
-second();
+*/

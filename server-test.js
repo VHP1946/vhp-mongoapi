@@ -1,5 +1,19 @@
 const {Core}=require('vhp-api');
 
+
+const VHPMongoClient=require('./mdb/mongo');
+
+let connectInfo ={
+  user: 'christianv',
+  pswrd: 'AMracing5511',
+  db:'',
+  cluster:'cluster0'
+}
+let uri = `mongodb+srv://${connectInfo.user}:${connectInfo.pswrd}@${connectInfo.cluster}.0awfqdk.mongodb.net/${connectInfo.db}?retryWrites=true&w=majority`
+
+
+
+
 let API = new Core({
     auth:{
         user:"VOGCH", 
@@ -53,6 +67,16 @@ let ipack={
   }
 }
 
+
+
+let vmclient = new VHPMongoClient(uri,()=>{
+    vmclient.ROUTErequest(fpack).then(answer=>{
+      console.log(answer[0].Device);
+    })
+  });
+  
+/*
 API.SENDrequest({pack:fpack}).then(answer=>{
     console.log(answer)
 });
+*/
