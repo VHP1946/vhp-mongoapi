@@ -8,7 +8,7 @@ var empSchema = new Schema({
 	fName: String,
 	lName: String,
 	
-	coid: {type:String, uppercase:true},
+	coid: String,
 	title: String,
 	type: String,
 	repTo: String, //empID
@@ -18,15 +18,14 @@ var empSchema = new Schema({
 	bday: Date,
 	skills: String,
 	interest: String,
-	
-	devices: [{type: Schema.Types.ObjectId, ref: 'Device'}],
-	
+
 	tasks: Array,
 	goals: Array,
 	picture: String,
 },
 {	
 	strictQuery: false,
+	timestamps:true,
     virtuals: {
         fullName: {
             get(){
@@ -37,9 +36,16 @@ var empSchema = new Schema({
                 this.lName = v.substr(v.indexOf(' ')+1);
             }
         },
-		accs: {
+		Account: {
 			options:{
 				ref: 'Account',
+				localField: 'empID',
+				foreignField: 'empID'
+			}
+		},
+		Device: {
+			options:{
+				ref: 'Device',
 				localField: 'empID',
 				foreignField: 'empID'
 			}
@@ -58,15 +64,12 @@ var devSchema = new Schema({
 	iccid: String,
 	lock: String,
 	
-	linkedAccounts: Array,
-	
 	purchaseDate: Date,
 	upgradeDate: Date
 });
 
 var accSchema = new Schema({
 	empID: String,
-	emp: {type: mongoose.Schema.Types.ObjectId, ref: 'Employee'},
 	type: String,
 	user: String, // email OR username
 	pswrd: String,
@@ -75,30 +78,18 @@ var accSchema = new Schema({
 	resetPswrd: Date
 });
 
-var cBidSchema = new Schema({
-	date: Date,
-	jobname: String,
-	primary: String,
-	profit: Number,
-	amount: String,
-	bid: String,
-	estimator: String,
-	location: String,
-	sqft: Number,
-	tonnage: Number,
-	type: String,
-	bldtype: String,
-	margin: String,
-	notes: String
+var userSchema = new Schema({
+	empID: String,
+	user: String,
+	pswrd: String,
+	apps: Array,
+	permissions: Array,
+	admin: Boolean
 });
 
 module.exports={
     Employee:empSchema,
-	BlueUser:empSchema,
     Device:devSchema,
     Account:accSchema,
-	
-	lrgTest:cBidSchema,
-	xlTest:cBidSchema,
-	xxlTest:cBidSchema
+	User:userSchema
 }

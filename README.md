@@ -65,6 +65,13 @@ Update:{
                                     upsertedCount: 0,
                                     matchedCount: 1
                                   }
+"insert" (doc to update does not exist): {
+                                    acknowledged: true,
+                                    modifiedCount: 0,
+                                    upsertedId: new ObjectId("645109b33df32fe6f0826fbf"),
+                                    upsertedCount: 1,
+                                    matchedCount: 0
+                                  }
 }
 
 
@@ -129,6 +136,7 @@ Insert:{
                             ]
 
   bad (doc already exists): ::NO RESPONSE::
+                    MongoBulkWriteError
 
 
   bad (one doc exists in array): ::NO RESPONSE::
