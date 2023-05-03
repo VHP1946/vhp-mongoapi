@@ -3,7 +3,6 @@ const {Schema} = mongoose;
 
 var empSchema = new Schema({
 	empID: String,
-
 	name: String,
 	fName: String,
 	lName: String,
@@ -54,6 +53,7 @@ var empSchema = new Schema({
 });
 
 var devSchema = new Schema({
+	devID: String,
 	empID: String,
 	name: String,
 	type: String,
@@ -73,7 +73,7 @@ var accSchema = new Schema({
 	type: String,
 	user: String, // email OR username
 	pswrd: String,
-	twoFactors: Array,
+	twoFactors: [{type:String,contact:String}],
 	active: Boolean,
 	resetPswrd: Date
 });

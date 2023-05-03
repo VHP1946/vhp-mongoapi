@@ -58,19 +58,25 @@ let ipack={
   }
 }
 
-let vmclient = new VHPMongoClient(uri,()=>{
-  vmclient.ROUTErequest(fpack).then(res=>{console.log('RESULT >',res)}).catch(err=>{'ERROR Response >',err});
-});
 
-
-/*
-var PORT = process.env.PORT || 8080//4050; //port for local host
+var PORT = process.env.PORT || 4000//4050; //port for local host
 
 var server = http.createServer();
 
+server.on('request',(req,res)=>{//handle headers =>
+  if(req.rawHeaders['Sec-Fetch-Site']!='same-origin'){
+    if(true){//flag to handle cors, change in config file
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST');
+      res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
+    }
+  }
+});
 server.on('request',(req,res)=>{
-  //console.log('Request from mart');
+  console.log('Request from mart');
+
   let data = '';
+
   req.on('data',chunk=>{data+=chunk;});
 
   req.on('end',()=>{
@@ -86,9 +92,16 @@ server.on('request',(req,res)=>{
         cip:req.connection.remoteAddress,
       }
     }
-    console.log(log);
+    vmclient.ROUTErequest(vpak.pack).then(result=>{
+      console.log(result);
+      res.write(JSON.stringify(result));
+      res.end();
+    });
   });
 });
 
-server.listen(PORT,()=>{console.log('VAPI Core Listening: ',PORT)});
-*/
+
+let vmclient = new VHPMongoClient(uri,()=>{
+  server.listen(PORT,()=>{console.log('VAPI Core Listening: ',PORT)});
+});
+

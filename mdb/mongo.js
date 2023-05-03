@@ -2,9 +2,7 @@ const mongoose = require('mongoose'),
         path = require('path'),
         fs = require('fs');
 
-
 const schemas = require('../models/vhp-schemas');
-
 class VHPMongoClient{
     /**
      * Will attempt to connect to a mongodb server based on the
@@ -30,59 +28,79 @@ class VHPMongoClient{
     /**
      * Here are some notes on this
      * 
-     * @param {{db:String,collect:String,method:String}} pack
+     * Employee_Account
+     * 
+     * @param {{db:String,collect:String,method:String,options:Object}} pack
      * @returns 
      */
     ROUTErequest(pack){
         return new Promise((resolve,reject)=>{
             var dbcursor = null; //holds the database to be request from
+            var populates = []; //holds an array of items to collect at once
             this.CHECKforDB(pack.db).then(dbexists=>{
                 if(dbexists){
+                    //split collection OR check for '_' in collection field
+                    // save to array
+                    console.log(pack.collect);//ensure above array[0] exist as collection
+                    populates = pack.collect.split('_');
+                    pack.collect=populates.shift();
                     if(schemas[pack.collect]){//check that pack.collect has a schema
-                        dbcursor = this.connection.useDb(pack.db).model(pack.collect,schemas[pack.collect]);
-                        if(pack.options.pop){
-                            let ref = schemas[pack.collect].virtuals[pack.options.pop].options.ref;
-                            this.connection.useDb(pack.db).model(ref,schemas[ref]);
-                        }
-                        //console.log('Schema >',JSON.stringify(dbcursor.schema.obj.empID));
-                        switch(pack.method){
-                            case 'QUERY':{return resolve(this.QUERYdb(dbcursor,pack));}
-                            case 'REMOVE':{
-                                console.log('remove');
-                                return resolve(dbcursor.deleteMany(pack.options.query))
-                            }
-                            case 'UPDATE':{return resolve(dbcursor.updateMany(pack.options.query,pack.options.update))}
-                            case 'INSERT':{return resolve(dbcursor.insertMany(pack.options.docs))}
+                        dbcursor = this.connection.useDb(pack.db,{useCache:true}).model(pack.collect,schemas[pack.collect]);
+                        switch(pack.method.toUpperCase()){
+                            case 'QUERY':{console.log('query');return resolve(this.QUERYdb(dbcursor,pack,populates));break;}
+                            case 'REMOVE':{console.log('remove');return resolve(this.REMOVEdocs(dbcursor,pack));break;}
+                            case 'UPDATE':{console.log('update');return resolve(this.UPDATEdocs(dbcursor,pack));break;}
+                            case 'INSERT':{console.log('insert');return resolve(this.INSERTdocs(dbcursor,pack));break;}
                         }
                         return resolve('could not resolve method');
-                    }else{console.log('NO SCHEMA')}
-                }
+                    }else{return resolve('No Collect');}
+                }else{return resolve('No DB');}
             })
         });
     }
 
-    QUERYdb(dbcursor, pack){
-        console.log('Query');
-        if(pack.options.query){
-            if(pack.options.pop){
-                console.log('pop');
-                dbcursor.find(pack.options.query).populate(pack.options.pop).then((res)=>{
-                    return res;
+    QUERYdb(dbcursor, pack,poplist=[]){
+        return new Promise((resolve,reject)=>{
+            let request = null;
+            if(pack.options.query){
+                if(poplist.length>0){//if there are things to populate, loop through and establish the connection
+                    for(let x=0,l=poplist.length;x<l;x++){
+                        console.log(poplist[x])
+                        if(schemas[pack.collect].virtuals[poplist[x]]){
+                            console.log('population')
+                            this.connection.useDb(pack.db,{useCache:true}).model(schemas[pack.collect].virtuals[poplist[x]].options.ref,schemas[schemas[pack.collect].virtuals[poplist[x]].options.ref]);
+                        }
+                    }
+                    request = dbcursor.find(pack.options.query).populate(poplist[0]);
+                }else{request = dbcursor.find(pack.options.query);}
+                request.then((res)=>{
+                    return resolve(res);
                 });
-            }else{
-                dbcursor.find(pack.options.query).then((res)=>{
-                    return res;
-                });
-            }
-        }else{
-            return ('No QUERY option provided');
-        }
+            }else{return resolve('No QUERY option provided');}
+        });
+    }
+
+    REMOVEdocs(dbcursor,pack){
+        return new Promise((resolve,reject)=>{
+            return resolve(dbcursor.deleteMany(pack.options.query))
+        });
+    }
+    INSERTdocs(dbcursor,pack){
+        return new Promise((resolve,reject)=>{
+            return resolve(dbcursor.insertMany(pack.options.query))
+        });
+    }
+    UPDATEdocs(dbcursor,pack){
+        return new Promise((resolve,reject)=>{
+            return resolve(dbcursor.updateMany(pack.options));
+        });
     }
 
 
     CHECKforDB(db){
         return new Promise((resolve,reject)=>{
             this.admin.listDatabases().then(res=>{
+                console.log(res.databases)
                 if(res.databases){
                     for(let x=0,l=res.databases.length;x<l;x++){
                         if(db===res.databases[x].name){return resolve(true);}
