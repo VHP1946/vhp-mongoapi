@@ -37,25 +37,25 @@ class VHPMongoClient{
         return new Promise((resolve,reject)=>{
             var dbcursor = null; //holds the database to be request from
             var populates = []; //holds an array of items to collect at once
-            this.CHECKforDB(pack.db||'').then(dbexists=>{
+            this.CHECKforDB(pack.db!=undefined?pack.db:'').then(dbexists=>{
                 if(dbexists){
                     //split collection OR check for '_' in collection field
                     populates = pack.collect.split('_');
                     pack.collect=populates.shift();
                     if(schemas[pack.collect]){//check that pack.collect has a schema
                         dbcursor = this.connection.useDb(pack.db,{useCache:true}).model(pack.collect,schemas[pack.collect]);
-                        switch(pack.method.toUpperCase()){
-                            case 'QUERY':{console.log('query');return resolve(this.QUERYdocs(dbcursor,pack,populates));break;}
-                            case 'REMOVE':{console.log('remove');return resolve(this.REMOVEdocs(dbcursor,pack));break;}
-                            case 'UPDATE':{console.log('update');return resolve(this.UPDATEdocs(dbcursor,pack));break;}
-                            case 'INSERT':{console.log('insert');return resolve(this.INSERTdocs(dbcursor,pack));break;}
-                        }
-                        return resolve('could not resolve method');
-                    }else{return resolve('No Collect');}
-                }else{return resolve('No DB');}
-            }).catch(err=>{
-                return resolve('DB Failed to find')
-            })
+                        if(pack.options!=undefined){
+                            switch(pack.method.toUpperCase()){
+                                case 'QUERY':{console.log('query');return resolve(this.QUERYdocs(dbcursor,pack,populates));break;}
+                                case 'REMOVE':{console.log('remove');return resolve(this.REMOVEdocs(dbcursor,pack));break;}
+                                case 'UPDATE':{console.log('update');return resolve(this.UPDATEdocs(dbcursor,pack));break;}
+                                case 'INSERT':{console.log('insert');return resolve(this.INSERTdocs(dbcursor,pack));break;}
+                            }
+                            return resolve({success:false,msg:'Could not resolve method',results:null});
+                        }else{return resolve({success:false,msg:'No Options',results:null})}
+                    }else{return resolve({success:false,msg:'Not a collection',results:null});}
+                }else{return resolve({success:false,msg:'Not a database',results:null})}
+            }).catch(err=>{return resolve({success:false,msg:'Failed to Find Database',results:null})})
         });
     }
 
