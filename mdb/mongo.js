@@ -44,18 +44,18 @@ class VHPMongoClient{
                     pack.collect=populates.shift();
                     if(schemas[pack.collect]){//check that pack.collect has a schema
                         dbcursor = this.connection.useDb(pack.db,{useCache:true}).model(pack.collect,schemas[pack.collect]);
-                        if(pack.options!=undefined){
-                            switch(pack.method.toUpperCase()){
-                                case 'QUERY':{console.log('query');return resolve(this.QUERYdocs(dbcursor,pack,populates));break;}
-                                case 'REMOVE':{console.log('remove');return resolve(this.REMOVEdocs(dbcursor,pack));break;}
-                                case 'UPDATE':{console.log('update');return resolve(this.UPDATEdocs(dbcursor,pack));break;}
-                                case 'INSERT':{console.log('insert');return resolve(this.INSERTdocs(dbcursor,pack));break;}
-                            }
-                            return resolve({success:false,msg:'Could not resolve method',results:null});
-                        }else{return resolve({success:false,msg:'No Options',results:null})}
+                            if(pack.options!=undefined){
+                                switch(pack.method!=undefined?pack.method.toUpperCase():''){
+                                    case 'QUERY':{console.log('query');return resolve(this.QUERYdocs(dbcursor,pack,populates));break;}
+                                    case 'REMOVE':{console.log('remove');return resolve(this.REMOVEdocs(dbcursor,pack));break;}
+                                    case 'UPDATE':{console.log('update');return resolve(this.UPDATEdocs(dbcursor,pack));break;}
+                                    case 'INSERT':{console.log('insert');return resolve(this.INSERTdocs(dbcursor,pack));break;}
+                                }
+                                return resolve({success:false,msg:'Could not resolve method',results:null});
+                            }else{return resolve({success:false,msg:'No Options',results:null})}
                     }else{return resolve({success:false,msg:'Not a collection',results:null});}
                 }else{return resolve({success:false,msg:'Not a database',results:null})}
-            }).catch(err=>{return resolve({success:false,msg:'Failed to Find Database',results:null})})
+            }).catch(err=>{return resolve({success:false,msg:'Failed to resolve request',results:null})})
         });
     }
 
