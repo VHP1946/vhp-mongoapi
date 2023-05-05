@@ -73,9 +73,9 @@ class VHPMongoClient{
                 }else{request = dbcursor.find(pack.options.query,pack.options.projection,pack.options.options);}
                 request.then((res)=>{
                     console.log(res);
-                    return resolve(res);
+                    return resolve({success:true,msg:'Queried',result:res});
                 });
-            }else{return resolve('No QUERY option provided');}
+            }else{return resolve({success:false,msg:'No query option',result:null})}
         });
     }
 
