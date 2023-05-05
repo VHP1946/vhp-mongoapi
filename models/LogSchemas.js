@@ -1,5 +1,6 @@
-
- logSchema = new Schema({
+const mongoose = require('mongoose');
+const {Schema} = mongoose;
+ var logSchema = new Schema({
     timein:Date,
     timecheck:Date,
     timeout:Date,
