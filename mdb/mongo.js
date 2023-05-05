@@ -37,11 +37,9 @@ class VHPMongoClient{
         return new Promise((resolve,reject)=>{
             var dbcursor = null; //holds the database to be request from
             var populates = []; //holds an array of items to collect at once
-            this.CHECKforDB(pack.db).then(dbexists=>{
+            this.CHECKforDB(pack.db||'').then(dbexists=>{
                 if(dbexists){
                     //split collection OR check for '_' in collection field
-                    // save to array
-                    console.log(pack.collect);//ensure above array[0] exist as collection
                     populates = pack.collect.split('_');
                     pack.collect=populates.shift();
                     if(schemas[pack.collect]){//check that pack.collect has a schema
@@ -55,6 +53,8 @@ class VHPMongoClient{
                         return resolve('could not resolve method');
                     }else{return resolve('No Collect');}
                 }else{return resolve('No DB');}
+            }).catch(err=>{
+                return resolve('DB Failed to find')
             })
         });
     }
@@ -81,18 +81,31 @@ class VHPMongoClient{
 
     REMOVEdocs(dbcursor,pack){
         return new Promise((resolve,reject)=>{
-            return resolve(dbcursor.deleteMany(pack.options.query))
+            let {query}=pack.options;
+            if(query!=undefined){
+                dbcursor.deleteMany(pack.options.query).then(result=>{
+                    return resolve({success:true,msg:'',result:result})
+                })
+            }else{return resolve({success:false,msg:'bad options',result:null})}
         });
     }
+
     INSERTdocs(dbcursor,pack){
         return new Promise((resolve,reject)=>{
-            console.log('Docs',pack.options.docs);
-            return resolve(dbcursor.insertMany(pack.options.docs))
+            if(pack.options.docs){
+                dbcursor.insertMany(pack.options.docs).then(result=>{
+                    return resolve({success:true,msg:'',result:result})
+                })
+            }else{return resolve({success:false,msg:'bad options',result:null})}
         });
     }
     UPDATEdocs(dbcursor,pack){
         return new Promise((resolve,reject)=>{
-            return resolve(dbcursor.updateMany(pack.options.query,pack.options.update));
+            if(pack.options.query!=undefined&&pack.options.update!=undefined){
+                dbcursor.updateMany(pack.options.query,pack.options.update).then(result=>{
+                    return resolve({success:true,msg:'',result:result})
+                })
+            }else{return resolve({success:false,msg:'bad options',result:null})}
         });
     }
 
@@ -100,11 +113,8 @@ class VHPMongoClient{
     CHECKforDB(db){
         return new Promise((resolve,reject)=>{
             this.admin.listDatabases().then(res=>{
-                console.log(res.databases)
                 if(res.databases){
-                    for(let x=0,l=res.databases.length;x<l;x++){
-                        if(db===res.databases[x].name){return resolve(true);}
-                    }
+                    for(let x=0,l=res.databases.length;x<l;x++){if(db===res.databases[x].name){return resolve(true);}}
                     return resolve(false);
                 }else{return resolve(false);}
             }).catch(err=>{return resolve(false);})
