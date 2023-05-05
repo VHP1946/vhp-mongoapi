@@ -86,6 +86,7 @@ class VHPMongoClient{
     }
     INSERTdocs(dbcursor,pack){
         return new Promise((resolve,reject)=>{
+            console.log('Docs',pack.options.docs);
             return resolve(dbcursor.insertMany(pack.options.docs))
         });
     }
