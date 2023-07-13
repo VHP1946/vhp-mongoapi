@@ -59,11 +59,14 @@ var devSchema = new Schema({
 	empID: String,
 	name: String,
 	type: String,
+	manf:String,
 	model: String,
 	serial: String,
-	cardNum: String,
-	cardRef: String,
+	simNum: String,
+	simRef: String,
 	iccid: String,
+	userName:String,
+	userLock:String,
 	lock: String,
 	
 	purchaseDate: Date,
@@ -76,7 +79,11 @@ var accSchema = new Schema({
 	user: String, // email OR username
 	pswrd: String,
 	twoFactors: [{type:String,contact:String}],
+	devices:Array,
 	active: Boolean,
+	apps:Array,
+	permissions:Array,
+	admin:Boolean,
 	resetPswrd: Date
 });
 
